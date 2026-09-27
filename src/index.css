@@ -77,27 +77,69 @@ body {
   -webkit-overflow-scrolling: touch;
 }
 
-/* 1080x1350 HD Export Target */
+/* ============================================================
+   1080×1350 HD Export Canvas — FIXED SIZE, PRECISE LAYOUT
+   ============================================================
+   Elemen ini hidden dari view (opacity 0, fixed off-screen),
+   tetapi html2canvas akan merender kontennya.
+   
+   PENTING:
+   - width & height harus tepat 1080×1350
+   - overflow TIDAK boleh hidden agar konten panjang terlihat
+     (tapi canvas html2canvas dikonfigurasi 1080×1350)
+   - position fixed supaya tidak memengaruhi layout halaman
+   - opacity 0 agar tidak terlihat user
+   ============================================================ */
 #invoice-export-1080 {
-  width: 1080px;
-  height: 1350px;
-  min-width: 1080px;
-  min-height: 1350px;
-  max-width: 1080px;
-  max-height: 1350px;
-  padding: 52px 52px 42px 52px;
+  /* Canvas size — FIXED, tidak berubah berapa pun layarnya */
+  width: 1080px !important;
+  min-width: 1080px !important;
+  max-width: 1080px !important;
+  /* Height bisa lebih dari 1350 jika konten banyak,
+     tapi html2canvas akan crop ke 1350 */
+  min-height: 1350px !important;
+
+  /* Safe area padding: 70px LR, 60px TB */
+  padding: 60px 70px !important;
   background: #ffffff;
   color: #0f172a;
   box-sizing: border-box;
+
+  /* Hidden dari user tapi dapat di-render html2canvas */
   position: fixed;
-  left: 0;
+  left: -9999px;
   top: 0;
-  z-index: -1000;
+  z-index: -999;
   opacity: 0;
   pointer-events: none;
+
+  /* Layout */
+  display: block;
+  font-variant-numeric: tabular-nums;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Preview skala 1080 di-scaling supaya muat di panel preview */
+.invoice-1080-preview-wrapper {
+  width: 100%;
   overflow: hidden;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  font-variant-numeric: tabular-nums;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.invoice-1080-scaled {
+  transform-origin: top center;
+  /* Scale akan diatur via JS / inline style */
+}
+
+/* Animasi fade-in untuk dropdown */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.15s ease-out;
 }
